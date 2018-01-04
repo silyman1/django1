@@ -1,0 +1,9 @@
+{%extends "base.html"%}
+{%block content%}
+<div><strong>商品：{{product.title}}</strong></div>
+<div>描述：{{product.description}}</div>
+<div>价格：{{product.price}}</div>
+<div>店主：{{product.store.seller.username}}</div>
+<div>店铺：{{product.store.store_name}}</div>
+<div>上市时间：{{product.time_to_market}}</div>
+{%endblock%}

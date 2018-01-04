@@ -1,0 +1,13 @@
+{%extends "base.html"%}
+{%block content%}
+<h1>Hello ! man</h1>
+<p><a href='/accounts/login/'>login</a></p>
+{%for product in product_list%}
+<p>
+	<div><a href={%url 'depotapp:detail' product.id%}><strong>{{product.title}}</strong></a></div>
+	<div><i>{{product.price}}</i></div>
+	<div><i>{{product.store.store_name}}</i></div>
+	<hr>
+</p>
+{%endfor%}
+{%endblock%}

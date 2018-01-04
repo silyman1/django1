@@ -8,7 +8,8 @@ class Question(models.Model):
 	question_text = models.CharField(max_length=200)
 	pub_date = models.DateTimeField('date published')#此参数可选。
 	def was_published_recently(self):
-		return self.pub_date >= timezone.now()- datetime.timedelta(days= 1)
+		now = timezone.now()
+		return now >= self.pub_date >= now- datetime.timedelta(days= 1)
 	def __unicode__(self):
 		return self.question_text#返回unicode
 	was_published_recently.admin_order_field = 'pub_date'

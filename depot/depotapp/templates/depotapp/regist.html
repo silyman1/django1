@@ -1,0 +1,12 @@
+{%extends "base.html"%}
+{%block content%}
+<h3 >注册lalala！！！</h3>
+<form action=""method="post"name="login">
+{% csrf_token %}
+<p>{{registerform.username}}</p>
+<p>{{registerform.password}}</p>
+<p>{{registerform.email}}</p>
+<p>{{registerform.Tel}}</p>
+<p><input type="submit" class="btn btn-info" value="注册"></p>
+</form>
+{%endblock%}

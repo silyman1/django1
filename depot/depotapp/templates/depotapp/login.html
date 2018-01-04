@@ -1,0 +1,11 @@
+{%extends "base.html"%}
+{%block content%}
+<h3 >欢迎登录lalala！！！</h3>
+<p><a href={%url 'depotapp:regist'%}>zhuce</a></p>
+<form action=""method="post"name="login">
+{% csrf_token %}
+<p>{{loginform.username}}</p>
+<p>{{loginform.password}}</p>
+<p><input type="submit" class="btn btn-info" value="登录"></p>
+</form>
+{%endblock%}

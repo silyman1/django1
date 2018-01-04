@@ -1,0 +1,17 @@
+{%extends "base.html"%}
+{%block content%}
+<h1>卖家管理商品清单</h1>
+<p><a href='/accounts/logout/'>logout</a></p>
+{%if product_list%}
+{%for product in product_list%}
+<p>
+	<div><a href={%url 'depotapp:detail' product.id%}><strong>{{product.title}}</strong></a></div>
+	<div><i>{{product.price}}</i></div>
+	<div><i>{{product.store.store_name}}</i></div>
+	<hr>
+</p>
+{%endfor%}
+{%else%}
+<h3>暂无商品</h3>
+{%endif%}
+{%endblock%}
