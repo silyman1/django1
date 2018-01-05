@@ -27,7 +27,8 @@ def login_view(request):
 			username =loginform.cleaned_data['username']
 			password =loginform.cleaned_data['password']
 			#user = User.objects.filter(username__exact=username,password__exact=password)
-			user = authenticate(username=username,password=password)
+			user = authenticate(username=username,password=password
+			)
 			print user
 			if user:
 				login(request,user)
@@ -36,6 +37,7 @@ def login_view(request):
 				else:
 					print request.user
 					return redirect(reverse('depotapp:seller'))
+			return render_to_response('login.html',{'loginform':loginform})
 	else:
 		loginform = LoginForm()
 		return render_to_response('login.html',{'loginform':loginform})
