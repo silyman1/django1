@@ -1,0 +1,33 @@
+{%extends "base.html"%}
+{%block content%}
+<h1>新添店铺:</h1>
+<form action="" method="post" name ="edit">
+	{%csrf_token%}
+	<table>
+		<tr>
+			<td>店铺名:</td>
+			<td>{{store_form.store_name}}</td>
+		</tr>
+		<tr>
+			<td>店铺简介:</td>
+			<td>{{store_form.description}}</td>
+		</tr>
+		<tr>
+			<td>店铺地址:</td>
+			<td>{{store_form.store_addr}}</td>
+		</tr>
+		<tr>
+			<td>店铺类型:</td>
+			<td>{{store_form.store_type}}</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><input type="submit" value="添加"></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><a href={%url 'depotapp:seller_store' user.id%}><strong>返回店铺列表</strong></a></td>
+		</tr>
+	</table>
+</form>
+{% endblock %}

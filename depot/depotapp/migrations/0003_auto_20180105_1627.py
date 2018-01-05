@@ -7,13 +7,13 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('depotapp', '0003_auto_20180104_1728'),
+        ('depotapp', '0002_auto_20180105_1504'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='user',
-            name='user_register_time',
-            field=models.DateTimeField(auto_now_add=True, verbose_name=b'date to register'),
+            model_name='store',
+            name='store_product_num',
+            field=models.PositiveIntegerField(default=0),
         ),
     ]

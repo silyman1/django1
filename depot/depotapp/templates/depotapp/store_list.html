@@ -1,0 +1,17 @@
+{%extends "base.html"%}
+{%block content%}
+<h1>Hello ! {{user.username}}</h1>
+<p><a href={%url 'depotapp:add_store' user.id%}>添加商铺：</a></p>
+<hr/>
+{%for store in store_list%}
+<p>
+	<div><strong><a href={%url 'depotapp:store_detail' store.id%}>店铺名：{{store.store_name}}</a></strong>&nbsp;&nbsp;&nbsp;<span>
+		<a href={%url 'depotapp:store_detail_edit' store.id%}>编辑信息</a></span>
+	</div>
+	<div><i>店铺注册时间：{{store.store_register_time}}</i></div>
+	<div><i>店铺地址：{{store.store_addr}}</i></div>
+	<div><i>店铺分类：{{store.store_type}}</i></div>
+	<hr>
+</p>
+{%endfor%}
+{%endblock%}
