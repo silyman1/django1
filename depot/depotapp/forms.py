@@ -15,3 +15,8 @@ class Store_detail_EditForm(forms.Form):
 	store_type = forms.CharField(label='店铺类型',max_length=50)
 	store_addr = forms.CharField(label='店铺地址',max_length=100)
 	description = forms.CharField(label='店铺简介',max_length=100,required=False,widget=forms.Textarea(attrs={'cols':'80','rows':'5'}) )
+class Add_product_Form(forms.Form):
+	product_name = forms.CharField(label='商品名',max_length=50)
+	description = forms.CharField(label='商品简介', max_length=100, required=False,
+								  widget=forms.Textarea(attrs={'cols': '80', 'rows': '5'}))
+	price = forms.DecimalField(decimal_places=2)

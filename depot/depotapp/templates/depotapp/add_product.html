@@ -1,0 +1,30 @@
+{%extends "base.html"%}
+{%block content%}
+<h1>{{store.store_name}}</h1>
+<h2>新添商品:</h2>
+<form action="" method="post" name ="edit">
+	{%csrf_token%}
+	<table>
+		<tr>
+			<td>商品名:</td>
+			<td>{{product_form.product_name}}</td>
+		</tr>
+		<tr>
+			<td>商品简介:</td>
+			<td>{{product_form.description}}</td>
+		</tr>
+		<tr>
+			<td>商品价格:</td>
+			<td>{{product_form.price}}</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><input type="submit" value="添加"></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><a href={%url 'depotapp:store_detail' store.id%}><strong>返回店铺详情</strong></a></td>
+		</tr>
+	</table>
+</form>
+{% endblock %}

@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 #from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth import authenticate,login,logout
-from .forms import LoginForm,RegisterForm,Store_detail_EditForm
+from .forms import LoginForm,RegisterForm,Store_detail_EditForm,Add_product_Form
 import datetime
 from django.utils import timezone
 from django.http import HttpResponse
@@ -71,7 +71,7 @@ def shouye(request):
 	product_list = Product.objects.order_by('-time_to_market')[:20]
 	return render(request,'depotapp/shouye.html',{'product_list':product_list})
 @login_required
-def seller_list(request):
+def seller_list(request):#ddddddddddddddddddddddd
 	print request.user,'aaa'
 	if not request.user.is_buyer:
 		product_list = Product.objects.order_by('-time_to_market')[:20]
@@ -84,11 +84,13 @@ def index(request):
 def product_detail(request,product_id):
 	product = get_object_or_404(Product,pk= product_id)
 	return render(request,'depotapp/product_detail.html',{'product':product})
+@login_required
 def seller_store(request,user_id):
 	print user_id
 	user = get_object_or_404(User,pk=user_id)
 	store_list = user.store_set.all()
 	return render_to_response('depotapp/store_list.html',{'store_list':store_list,'user':user})
+@login_required
 def store_detail_edit(request,store_id):
 	print '======================'
 	store = get_object_or_404(Store,pk= store_id)
@@ -131,28 +133,30 @@ def add_store(request,user_id):
 		store_form = Store_detail_EditForm()
 		return render(request,'add_store.html',{'user':request.user,'store_form':store_form})
 def add_product(request,store_id):#未完成
+	store = get_object_or_404(Store, pk=store_id)
 	product = Product()
 	if request.method=='POST':
-		store_form =Store_detail_EditForm(request.POST)
-		if store_form.is_valid():
-			store.store_name = store_form.cleaned_data['store_name']
-			store.store_addr = store_form.cleaned_data['store_addr']
-			store.description = store_form.cleaned_data['description']
-			store.store_type = store_form.cleaned_data['store_type']
-			store.store_register_time = timezone.now()
-			store.seller = request.user
-			store.save()
-			print u'添加成功'
-			return redirect(reverse('depotapp:seller_store',args=(store.seller.id,)))
+		product_form =Add_product_Form(request.POST)
+		if product_form.is_valid():
+			product.title = product_form.cleaned_data['product_name']
+			product.description = product_form.cleaned_data['description']
+			product.price = product_form.cleaned_data['price']
+			product.time_to_market = timezone.now()
+			product.store = store
+			product.image_url = 'unsetting'
+			product.save()
+			print u'添加商品成功'
+			return redirect(reverse('depotapp:store_detail',args=(store.id,)))
 		else:
 			print 'wuxiao'
-			return render(request,'add_store.html',{'store':store,'store_form':store_form})
+			return render(request,'add_product.html',{'store':store,'product_form':product_form})
 	else:
-		store_form = Store_detail_EditForm()
-		return render(request,'add_store.html',{'user':request.user,'store_form':store_form})
+		product_form = Add_product_Form()
+		return render(request,'add_product.html',{'store':store,'product_form':product_form})
 def store_detail(request,store_id):
 	if not request.user.is_buyer:
-		product_list = Product.objects.order_by('-time_to_market')[:20]
-		return render(request,'depotapp/seller_list.html',{'product_list':product_list})
+		store = get_object_or_404(Store, pk=store_id)
+		product_list = store.product_set.all().order_by('-time_to_market')
+		return render(request,'depotapp/store_detail.html',{'product_list':product_list,'store':store})
 	else:
 		return HttpResponse('禁止访问')
