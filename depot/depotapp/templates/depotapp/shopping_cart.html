@@ -1,0 +1,19 @@
+{%extends "base.html"%}
+{%block content%}
+<h1>我的购物车</h1>
+<p><a href='/accounts/logout/'>logout</a></p>
+{%for item in productitem_list%}
+<p>
+	<div><a href={%url 'depotapp:product_detail' product.id%}><strong>{{item.pro_item.title}}</strong></a></div>
+	<div><i>{{item.unit_price}}</i></div>
+	<div><i>{{item.pro_item.store.store_name}}</i></div>
+	<hr/>
+</p>
+<hr/>
+<div><b>数量：{{item.quantity}}</b></div>
+<div><b>价格：{{item.item_price}}</b></div>
+<hr/>
+{%endfor%}
+<div></div>
+<div><b>总价：{{cart.total_price}}</b></div>
+{%endblock%}

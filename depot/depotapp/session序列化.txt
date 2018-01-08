@@ -1,0 +1,8 @@
+从Django 1.6开始session里面的数据都是用JSON来serialize。JSON的session只能接受简单的数据结构比如string, list, dictionary[1]。楼主的代码好像是在把cart放到session里面而报错的。因此楼主有两个选择，可以先把cart的数据放在一个dictionary里面再存到session或者可以换一个SessionSerializer。Django还提供一个用pickle来serialize的选择可以存任何一个数据结构，但是如果用pickle和CookieStore在一起有可能会不太安全[2]。
+
+
+我自己的解决方法是：
+
+在settings.py中加入SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
+ 

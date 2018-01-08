@@ -10,6 +10,8 @@ class RegisterForm(forms.Form):
 	password = forms.CharField(label='密码',widget=forms.PasswordInput())
 	email = forms.EmailField(label='邮箱')
 	Tel = forms.CharField(label='电话',max_length=20)
+	Choices = (('level1',True),('level2',False))
+	Is_buyer = forms.ChoiceField(choices=Choices,label='选择用户类型')
 class Store_detail_EditForm(forms.Form):
 	store_name = forms.CharField(label='店铺名',max_length=50)
 	store_type = forms.CharField(label='店铺类型',max_length=50)

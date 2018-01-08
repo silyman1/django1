@@ -2,6 +2,7 @@
 from django.db import models
 #from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 # Create your models here.
 class User(AbstractUser,models.Model):
 	#user_name = models.CharField(max_length=100,unique=True)
@@ -31,3 +32,13 @@ class Product(models.Model):
 	store = models.ForeignKey(Store)
 	def __unicode__(self):
 		return self.title#返回unicode
+class Cart(models.Model):
+	total_price = models.DecimalField(max_digits=24,decimal_places=2)
+	user = models.ForeignKey(User)
+class Lineitem(models.Model):
+	cart_name = models.ManyToManyField(Cart)
+	quantity = models.IntegerField(default = 1)
+	unit_price = models.DecimalField(max_digits=8,decimal_places=2)
+	time_to_cart =models.DateTimeField('date to cart')
+	item_price = models.DecimalField(max_digits=24,decimal_places=2)
+	pro_item = models.ForeignKey(Product)

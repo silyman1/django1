@@ -1,6 +1,6 @@
 #--coding=utf-8
 from django.shortcuts import render,get_object_or_404,render_to_response,redirect
-from .models import Store,Product,User
+from .models import Store,Product,User,Cart,Lineitem
 #from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -11,6 +11,7 @@ import datetime
 from django.utils import timezone
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
+from django.template import loader, RequestContext
 # Create your views here.
 @csrf_exempt
 def login_view(request):
@@ -54,10 +55,18 @@ def register(request):
 			password = registerform.cleaned_data['password']
 			email  =registerform.cleaned_data['email']
 			Tel =registerform.cleaned_data['Tel']
-			is_buyer = False
+			choice = registerform.cleaned_data['Is_buyer']
+			if choice == 'level1':
+				is_buyer=True
+			else:
+				is_buyer=False
 			user_register_time = timezone.now()
-			User.objects.create_user(username=username,password=password,email=email,Tel =Tel,is_buyer=is_buyer,user_register_time=user_register_time)
-			return HttpResponse('注册成功')
+			user=User.objects.create_user(username=username,password=password,email=email,Tel =Tel,is_buyer=is_buyer,user_register_time=user_register_time)
+			print user.is_buyer
+			if user.is_buyer==True:
+				return HttpResponse('注册成功')
+			else:
+				return redirect(reverse('depotapp:seller_store',args=(user.id,)))
 
 			#profile=UserProfile(user_id=user.id,Tel =Tel,is_buyer=is_buyer,user_register_time=user_register_time)
 			#profile.save()
@@ -71,7 +80,7 @@ def shouye(request):
 	product_list = Product.objects.order_by('-time_to_market')[:20]
 	return render(request,'depotapp/shouye.html',{'product_list':product_list})
 @login_required
-def seller_list(request):#ddddddddddddddddddddddd
+def seller_list(request):
 	print request.user,'aaa'
 	if not request.user.is_buyer:
 		product_list = Product.objects.order_by('-time_to_market')[:20]
@@ -83,7 +92,7 @@ def index(request):
 	return render(request,'depotapp/index.html',{'product_list':product_list})
 def product_detail(request,product_id):
 	product = get_object_or_404(Product,pk= product_id)
-	return render(request,'depotapp/product_detail.html',{'product':product})
+	return render(request,'depotapp/product_detail.html',{'product':product,'user':request.user})
 @login_required
 def seller_store(request,user_id):
 	print user_id
@@ -91,6 +100,7 @@ def seller_store(request,user_id):
 	store_list = user.store_set.all()
 	return render_to_response('depotapp/store_list.html',{'store_list':store_list,'user':user})
 @login_required
+@csrf_exempt
 def store_detail_edit(request,store_id):
 	print '======================'
 	store = get_object_or_404(Store,pk= store_id)
@@ -112,6 +122,8 @@ def store_detail_edit(request,store_id):
 	else:
 		store_form = Store_detail_EditForm(initial=data)
 		return render(request,'store_detail_edit.html',{'store':store,'store_form':store_form})
+@csrf_exempt
+@login_required
 def add_store(request,user_id):
 	store = Store()
 	if request.method=='POST':
@@ -132,7 +144,9 @@ def add_store(request,user_id):
 	else:
 		store_form = Store_detail_EditForm()
 		return render(request,'add_store.html',{'user':request.user,'store_form':store_form})
-def add_product(request,store_id):#未完成
+@csrf_exempt
+@login_required
+def add_product(request,store_id):
 	store = get_object_or_404(Store, pk=store_id)
 	product = Product()
 	if request.method=='POST':
@@ -153,6 +167,7 @@ def add_product(request,store_id):#未完成
 	else:
 		product_form = Add_product_Form()
 		return render(request,'add_product.html',{'store':store,'product_form':product_form})
+@login_required
 def store_detail(request,store_id):
 	if not request.user.is_buyer:
 		store = get_object_or_404(Store, pk=store_id)
@@ -160,3 +175,30 @@ def store_detail(request,store_id):
 		return render(request,'depotapp/store_detail.html',{'product_list':product_list,'store':store})
 	else:
 		return HttpResponse('禁止访问')
+@login_required
+def shopping_cart(request,user_id,product_id):
+	user = get_object_or_404(User, pk=user_id)
+	product = get_object_or_404(Product, pk=product_id)
+	if not user.cart_set.all():
+		cart =Cart(total_price=0,user=user)
+		cart=user.cart_set.all()[0]
+		lineitem=Lineitem(unit_price=product.price,time_to_cart=timezone.now(),item_price=product.price,pro_item=product,cart_name=cart)
+		cart.total_price +=lineitem.item_price
+	else:
+		cart=user.cart_set.all()[0]
+		item=cart.lineitem_set.filter(pro_item=product)
+		if item:
+			cart.lineitem_set.quantity +=1
+			cart.lineitem_set.item_price +=cart.lineitem.unit_price
+			cart.total_price += cart.lineitem_set.item_price
+			item.save()
+		else:
+			lineitem=Lineitem(unit_price=product.price,time_to_cart=timezone.now(),item_price=product.price,pro_item=product,cart_name=cart)
+			cart.total_price +=lineitem.item_price
+	cart.save()
+	productitem_list = cart.lineitem_set.all()
+	return render(request,'shopping_cart.html',{'cart':cart,'productitem_list':productitem_list})
+@login_required
+def payment(request,user_id,product_id):
+	print user_id,'====',product_id
+	return HttpResponse('tiaoshi')

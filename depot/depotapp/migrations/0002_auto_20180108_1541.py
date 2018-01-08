@@ -12,8 +12,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name='store',
-            name='description',
-            field=models.TextField(),
+            model_name='lineitem',
+            name='quantity',
+            field=models.IntegerField(default=0),
         ),
     ]
