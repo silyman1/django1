@@ -2,18 +2,23 @@
 {%block content%}
 <h1>我的购物车</h1>
 <p><a href='/accounts/logout/'>logout</a></p>
+<p><a href={%url 'depotapp:clear_cart' user.id cart.id%}>清空购物车</a></p>
+{%if productitem_list%}
 {%for item in productitem_list%}
 <p>
-	<div><a href={%url 'depotapp:product_detail' product.id%}><strong>{{item.pro_item.title}}</strong></a></div>
+	<div><a href={%url 'depotapp:product_detail' item.pro_item.id%}><strong>{{item.pro_item.title}}</strong></a></div>
 	<div><i>{{item.unit_price}}</i></div>
 	<div><i>{{item.pro_item.store.store_name}}</i></div>
 	<hr/>
 </p>
-<hr/>
 <div><b>数量：{{item.quantity}}</b></div>
 <div><b>价格：{{item.item_price}}</b></div>
 <hr/>
 {%endfor%}
+{%endif%}
 <div></div>
-<div><b>总价：{{cart.total_price}}</b></div>
+<hr/>
+<div><b>待支付：￥{{cart.total_price}}</b></div>
+<hr/>
+<div><b>立即支付</b></div>
 {%endblock%}

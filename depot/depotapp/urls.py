@@ -13,4 +13,5 @@ urlpatterns = [url(r'^$',views.index,name='index'),
 				url(r'^store/(?P<store_id>[0-9]+)/detail/$',views.store_detail,name='store_detail'),
 				url(r'^buyer/(?P<user_id>[0-9]+)/shopping_cart/(?P<product_id>[0-9]+)/$',views.shopping_cart,name='shopping_cart'),
 				url(r'^buyer/(?P<user_id>[0-9]+)/payment/(?P<product_id>[0-9]+)/$',views.payment,name='payment'),
+				url(r'^buyer/(?P<user_id>[0-9]+)/clear/(?P<cart_id>[0-9]+)/$',views.clear_cart,name='clear_cart'),
 ]

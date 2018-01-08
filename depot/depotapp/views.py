@@ -178,26 +178,48 @@ def store_detail(request,store_id):
 @login_required
 def shopping_cart(request,user_id,product_id):
 	user = get_object_or_404(User, pk=user_id)
+	if product_id == '0':
+		cart = user.cart_set.all()[0]
+		print cart
+		return render(request, 'shopping_cart.html', {'cart': cart, 'productitem_list': []})
 	product = get_object_or_404(Product, pk=product_id)
 	if not user.cart_set.all():
 		cart =Cart(total_price=0,user=user)
-		cart=user.cart_set.all()[0]
-		lineitem=Lineitem(unit_price=product.price,time_to_cart=timezone.now(),item_price=product.price,pro_item=product,cart_name=cart)
+		cart.save()
+		lineitem=Lineitem(unit_price=product.price,time_to_cart=timezone.now(),item_price=product.price,pro_item=product)
+		lineitem.save()
+		lineitem.cart_name.add(cart)
+		lineitem.save()
 		cart.total_price +=lineitem.item_price
 	else:
 		cart=user.cart_set.all()[0]
 		item=cart.lineitem_set.filter(pro_item=product)
 		if item:
-			cart.lineitem_set.quantity +=1
-			cart.lineitem_set.item_price +=cart.lineitem.unit_price
-			cart.total_price += cart.lineitem_set.item_price
-			item.save()
+			item[0].quantity +=1
+			item[0].item_price +=item[0].unit_price
+			item[0].save()
+			cart.total_price += item[0].unit_price
 		else:
-			lineitem=Lineitem(unit_price=product.price,time_to_cart=timezone.now(),item_price=product.price,pro_item=product,cart_name=cart)
+			lineitem=Lineitem(unit_price=product.price,time_to_cart=timezone.now(),item_price=product.price,pro_item=product)
+			lineitem.save()
+			lineitem.cart_name.add(cart)
+			lineitem.save()
 			cart.total_price +=lineitem.item_price
 	cart.save()
 	productitem_list = cart.lineitem_set.all()
 	return render(request,'shopping_cart.html',{'cart':cart,'productitem_list':productitem_list})
+@login_required
+def clear_cart(request,user_id,cart_id):
+	user = get_object_or_404(User, pk=user_id)
+	cart = get_object_or_404(Cart, pk=cart_id)
+	items = cart.lineitem_set.all()
+	if items:
+		for item in items:
+			item.delete()
+			cart.total_price = 0
+			cart.save()
+	useless_id = 0
+	return redirect(reverse('depotapp:shopping_cart',args=(user.id,useless_id)))
 @login_required
 def payment(request,user_id,product_id):
 	print user_id,'====',product_id
