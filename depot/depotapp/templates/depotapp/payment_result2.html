@@ -1,0 +1,7 @@
+{%extends "base.html"%}
+{%block content%}
+<h1>余额不足，支付失败！！！</h1>
+<div><b><a href={%url 'depotapp:recharge' user.id%}>去充值</b></div>
+<div><b><a href={%url 'depotapp:shopping_cart' user.id cart.id%}>返回购物车</b></div>
+<div><b><a href={%url 'depotapp:shouye'%}>返回首页</b></div>
+{%endblock%}

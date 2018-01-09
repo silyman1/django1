@@ -1,0 +1,22 @@
+{%extends "base.html"%}
+{%block content%}
+<h1>支付成功！！！</h1>
+<h3>-￥{{total}}</h3>
+{%for item in productitem_list%}
+<p>
+	<div>
+		<span><strong>{{item.pro_item.title}}</strong><span>
+	</div>
+	<div>
+		<span><i>单价：{{item.unit_price}}</i></span>&nbsp;&nbsp;
+		<span><i>数量：{{item.quantity}}</i></span>&nbsp;&nbsp;
+		<span><i>价格：{{item.item_price}}</i></span>
+	</div>
+<hr/>
+</p>
+{%endfor%}
+<div></div>
+<hr/>
+<div><b><a href={%url 'depotapp:shopping_cart' user.id cart.id%}>返回购物车</b></div>
+<div><b><a href={%url 'depotapp:shouye'%}>返回首页</b></div>
+{%endblock%}
