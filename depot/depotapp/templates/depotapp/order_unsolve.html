@@ -1,10 +1,9 @@
-{%extends "base1.html"%}
+{%extends "base2.html"%}
 {%block content%}
-<h1>我的订单</h1>
-<p><a href='/accounts/logout/'>logout</a></p>
+<h1>待处理清单:</h1>
 <p><a href={%url 'depotapp:delete_all_order' %}>删除所有订单</a></p>
 {%for order in order_list%}
-{%if not order.buyer_del%}
+{%if not order.seller_del%}
 <p>
 	<div><span>订单号：{{order.id}}</span>&nbsp;&nbsp;&nbsp;
 		<span><a href={%url 'depotapp:delete_order' order.id%}>删除订单</span></div>
@@ -22,7 +21,7 @@
 	{%if order.is_receiver%}
 	<div><b>已收货</b></div>
 	{%else%}
-	<div><a href={%url 'depotapp:confirm_receipt' user.id order.id%}><b>确认收货</b></a></div>
+	<div><b>待收货</b></div>
 	{%endif%}
 	<div></div>
 	<hr>

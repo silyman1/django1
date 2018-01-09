@@ -1,12 +1,12 @@
-{%extends "base.html"%}
+{%extends "base1.html"%}
 {%block content%}
 <h1>首页</h1>
 <p><a href='/accounts/logout/'>logout</a></p>
 {%for product in product_list%}
 <p>
-	<div><a href={%url 'depotapp:product_detail' product.id%}><strong>{{product.title}}</strong></a></div>
-	<div><i>{{product.price}}</i></div>
-	<div><i>{{product.store.store_name}}</i></div>
+	<div><a href={%url 'depotapp:product_detail' product.id%}><strong>商品：{{product.title}}</strong></a></div>
+	<div><i>价格：{{product.price}}</i></div>
+	<div><i>店铺：{{product.store.store_name}}</i></div>
 	<hr>
 </p>
 {%endfor%}

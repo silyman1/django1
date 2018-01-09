@@ -79,18 +79,25 @@ def register(request):
 
 def index(request):
 	product_list = Product.objects.order_by('-time_to_market')[:20]
-	cart = request.user.cart_set.all()[0]
 	return render(request,'depotapp/index.html',{'product_list':product_list})
 
 def product_detail(request,product_id):
 	product = get_object_or_404(Product,pk= product_id)
-	cart = request.user.cart_set.all()[0]
+	if request.user.cart_set.all():
+		cart = request.user.cart_set.all()[0]
+	else:
+		cart = Cart(total_price=0, user=request.user)
+		cart.save()
 	return render(request,'depotapp/product_detail.html',{'cart':cart,'product':product,'user':request.user})
 @login_required
 def seller_list(request):
 	print request.user,'aaa'
 	if not request.user.is_buyer:
-		product_list = Product.objects.order_by('-time_to_market')[:20]
+		list = Product.objects.order_by('-time_to_market')
+		product_list =[]
+		for product in list:
+			if product.store.seller.id == request.user.id:
+				product_list.append(product)
 		return render(request,'depotapp/seller_list.html',{'product_list':product_list})
 	else:
 		return HttpResponse('禁止访问')
@@ -264,6 +271,8 @@ def payment(request,user_id,cart_id):
 @login_required
 @csrf_exempt
 def recharge(request,user_id):
+	if not request.user.is_buyer:
+		return render(request, 'recharge1.html', {'user': request.user, 'title': '我的账户','recharge_form': []})
 	user = get_object_or_404(User, pk=user_id)
 	cart = user.cart_set.all()[0]
 	if request.method=='POST':
@@ -318,3 +327,29 @@ def delete_order(request,order_id):
 	if order.buyer_del and order.seller_del:
 		order.delete()
 	return redirect(reverse('depotapp:order_page',args=(request.user.id,)))
+@login_required
+def delete_all_order(request):
+	user = request.user
+	if user.is_buyer ==True:
+		order_list =Myorder.objects.filter(buyer=user.username)
+		for order in order_list:
+			order.buyer_del= True
+			order.save()
+			if order.buyer_del and order.seller_del:
+				order.delete()
+	else:
+		order_list = Myorder.objects.filter(seller=user.username)
+		for order in order_list:
+			order.seller_del = True
+			order.save()
+			if order.buyer_del and order.seller_del:
+				order.delete()
+	return redirect(reverse('depotapp:order_page',args=(request.user.id,)))
+@login_required
+def order_unsolve(request,user_id):
+	order_list = Myorder.objects.filter(seller=request.user.username,is_deliver=False)
+	return render(request, 'order_unsolve.html', {'order_list':order_list})
+@login_required
+def order_solved(request, user_id):
+	order_list = Myorder.objects.filter(seller=request.user.username, is_deliver=True)
+	return render(request, 'order_solved.html', {'order_list': order_list})
