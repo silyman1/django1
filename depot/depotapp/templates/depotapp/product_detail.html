@@ -9,8 +9,8 @@
 <div></div>
 <div></div>
 <div>
-	<span><a href={%url 'depotapp:shopping_cart' user.id product.id%}><strong>加入购物车</strong></a></span>
+	<span><a href={%url 'depotapp:add_to_shopping_cart' user.id product.id%}><strong>加入购物车</strong></a></span>
 	<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-	<span><a href={%url 'depotapp:payment' user.id product.id%}><strong>立即购买</strong></a></span>
+	<span><a href={%url 'depotapp:pay_single' user.id product.id%}><strong>立即购买</strong></span>
 </div>
 {%endblock%}

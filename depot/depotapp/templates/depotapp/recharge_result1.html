@@ -1,0 +1,8 @@
+{%extends "base.html"%}
+{%block content%}
+<h1>充值成功！！！</h1>
+<h3>当前账号余额：{{user.account}}</h3>
+<div><b><a href={%url 'depotapp:recharge' user.id%}>返回上一页</b></div>
+<div><b><a href={%url 'depotapp:shouye'%}>返回首页</b></div>
+
+{% endblock %}

@@ -18,7 +18,9 @@
 {%endif%}
 <div></div>
 <hr/>
+{%if cart.total_price%}
 <div><b>待支付：￥{{cart.total_price}}</b></div>
 <hr/>
-<div><b>立即支付</b></div>
+<div><b><a href={%url 'depotapp:payment' user.id cart.id%}>立即支付</a></b></div>
+{%endif%}
 {%endblock%}

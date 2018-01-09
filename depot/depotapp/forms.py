@@ -22,3 +22,5 @@ class Add_product_Form(forms.Form):
 	description = forms.CharField(label='商品简介', max_length=100, required=False,
 								  widget=forms.Textarea(attrs={'cols': '80', 'rows': '5'}))
 	price = forms.DecimalField(decimal_places=2)
+class Recharge_Form(forms.Form):
+	amount = forms.DecimalField(decimal_places=2)

@@ -7,15 +7,12 @@
 	<table>
 		<tr>
 			<td>请填写充值金额:</td>
-			<td>{{rechargeform.amount}}</td>
-		</tr>
-			<td></td>
+			<td>{{recharge_form.amount}}</td>
 			<td><input type="submit" value="充值"></td>
-		</tr>
-		<tr>
-			<td></td>
-			<div><b><a href={%url 'depotapp:shouye'%}>返回首页</b></div>
 		</tr>
 	</table>
 </form>
+<br>
+<hr>
+<div><b><a href={%url 'depotapp:shouye'%}>返回首页</b></div>
 {% endblock %}
