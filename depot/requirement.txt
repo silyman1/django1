@@ -1,0 +1,4 @@
+django-haystack==2.6.1
+whoosh==2.7.4
+jieba==0.39
+django==1.8

@@ -1,18 +1,24 @@
 {%extends "base2.html"%}
 {%block content%}
 <h1>已处理清单:</h1>
-<p><a href={%url 'depotapp:delete_all_order' %}>删除所有订单</a></p>
+<p><span><a href={%url 'depotapp:delete_all_order' %}>删除所有订单</a></span>&nbsp;&nbsp;<span>慎点！</span></p>
 {%for order in order_list%}
 {%if not order.seller_del%}
 <p>
 	<div><span>订单号：{{order.id}}</span>&nbsp;&nbsp;&nbsp;
+	{%if order.is_receiver%}
 		<span><a href={%url 'depotapp:delete_order' order.id%}>删除订单</span></div>
+	{%endif%}
 	<div><a href={%url 'depotapp:product_detail' order.product.id%}><strong>商品：{{order.product.title}}</strong></a></div>
 	<div><i>单价：{{order.product.price}}</i></div>
 	<div><i>数量：{{order.quantity}}</i></div>
 	<div><i>总计：{{order.order_price}}</i></div>
 	<div><span><i>店铺：{{order.product.store.store_name}}</i></span>&nbsp;&nbsp;&nbsp;<span><i>店长：{{order.seller}}</i></span></div>
 	<div><i>下单时间：{{order.order_time}}</i></div>
+	<div><i>发货时间：{{order.deliver_time}}</i></div>
+	{%if order.is_receiver%}
+	<div><i>收货时间：{{order.received_time}}</i></div>
+	{%endif%}
 	{%if not order.is_deliver%}
 	<div><b>待发货</b></div>
 	{%else%}

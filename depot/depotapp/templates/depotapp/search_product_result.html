@@ -1,0 +1,19 @@
+{%block content%}
+<h2>搜索商品结果：</h2>
+{%if error_msg%}
+<p>{{ error_msg }}</p>
+{%else%}
+{%if result_list%}
+{%for product in result_list%}
+<p>
+	<div><a href={%url 'depotapp:product_detail' product.id%}><strong>{{product.title}}</strong></a></div>
+	<div><i>{{product.price}}</i></div>
+	<div><i>{{product.store.store_name}}</i></div>
+	<hr>
+</p>
+{%endfor%}
+{%else%}
+<p>找不到你想要的商品</p>
+{%endif%}
+{% endif %}
+{%endblock%}

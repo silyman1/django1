@@ -1,0 +1,7 @@
+简单搜索功能：
+https://www.zmrenwu.com/post/19/
+全文搜索：
+http://blog.csdn.net/demo_3/article/details/74154280
+http://blog.csdn.net/tenlee/article/details/52371093
+多个字段索引出错
+https://github.com/django-haystack/django-haystack/issues/952

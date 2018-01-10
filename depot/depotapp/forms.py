@@ -24,3 +24,5 @@ class Add_product_Form(forms.Form):
 	price = forms.DecimalField(decimal_places=2)
 class Recharge_Form(forms.Form):
 	amount = forms.DecimalField(decimal_places=2)
+class SearchForm(forms.Form):
+	search = forms.CharField(label='搜索',max_length=100)

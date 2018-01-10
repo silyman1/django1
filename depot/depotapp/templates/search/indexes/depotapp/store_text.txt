@@ -1,0 +1,3 @@
+{{object.store_name}}
+{{object.store_type}}
+{{object.seller.username}}

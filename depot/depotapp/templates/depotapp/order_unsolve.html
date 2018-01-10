@@ -1,20 +1,22 @@
 {%extends "base2.html"%}
 {%block content%}
 <h1>待处理清单:</h1>
-<p><a href={%url 'depotapp:delete_all_order' %}>删除所有订单</a></p>
 {%for order in order_list%}
 {%if not order.seller_del%}
 <p>
 	<div><span>订单号：{{order.id}}</span>&nbsp;&nbsp;&nbsp;
-		<span><a href={%url 'depotapp:delete_order' order.id%}>删除订单</span></div>
 	<div><a href={%url 'depotapp:product_detail' order.product.id%}><strong>商品：{{order.product.title}}</strong></a></div>
 	<div><i>单价：{{order.product.price}}</i></div>
 	<div><i>数量：{{order.quantity}}</i></div>
 	<div><i>总计：{{order.order_price}}</i></div>
 	<div><span><i>店铺：{{order.product.store.store_name}}</i></span>&nbsp;&nbsp;&nbsp;<span><i>店长：{{order.seller}}</i></span></div>
+	<div><i>买家：{{order.buyer}}</i></div>
 	<div><i>下单时间：{{order.order_time}}</i></div>
 	{%if not order.is_deliver%}
-	<div><b>待发货</b></div>
+	<div>
+		<span><b>待发货</b><span>&nbsp;&nbsp;&nbsp;
+		<span><b><a href={%url 'depotapp:confirm_deliver' user.id order.id%}>发货</a></b><span>
+	</div>
 	{%else%}
 	<div><b>已发货，正在配送中...</b></div>
 	{%endif%}

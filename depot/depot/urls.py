@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^depot/', include('depotapp.urls',namespace="depotapp")),
     url(r'^accounts/login/$', login_view),
     url(r'^accounts/logout/$', logout_view),
+    url(r'^search/', include('haystack.urls')),
 ]

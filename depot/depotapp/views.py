@@ -6,12 +6,13 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 #from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth import authenticate,login,logout
-from .forms import LoginForm,RegisterForm,Store_detail_EditForm,Add_product_Form,Recharge_Form
+from .forms import LoginForm,RegisterForm,Store_detail_EditForm,Add_product_Form,Recharge_Form,SearchForm
 import datetime
 from django.utils import timezone
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from django.template import loader, RequestContext
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # Create your views here.
 
 #数据操作的user.id都没做判断
@@ -81,6 +82,13 @@ def index(request):
 	product_list = Product.objects.order_by('-time_to_market')[:20]
 	return render(request,'depotapp/index.html',{'product_list':product_list})
 
+def search_product(request):
+	q = request.GET.get('q')
+	if not q:
+		error_msg = '请输入要搜索的商品'
+		return render(request, 'depotapp/search_product_result.html', {'error_msg': error_msg})
+	result_list = Product.objects.filter(title__icontains=q)
+	return render(request, 'depotapp/search_product_result.html', {'result_list': result_list})
 def product_detail(request,product_id):
 	product = get_object_or_404(Product,pk= product_id)
 	if request.user.cart_set.all():
@@ -89,6 +97,11 @@ def product_detail(request,product_id):
 		cart = Cart(total_price=0, user=request.user)
 		cart.save()
 	return render(request,'depotapp/product_detail.html',{'cart':cart,'product':product,'user':request.user})
+
+def store_product(request,store_id):
+	store = get_object_or_404(Store, pk=store_id)
+	product_list = Product.objects.filter(store=store)
+	return  render(request,'depotapp/store_product.html',{'product_list':product_list})
 @login_required
 def seller_list(request):
 	print request.user,'aaa'
@@ -188,7 +201,15 @@ def store_detail(request,store_id):
 @login_required
 def shouye(request):
 	print request.user
-	product_list = Product.objects.order_by('-time_to_market')[:20]
+	products_list = Product.objects.order_by('-time_to_market')
+	p = Paginator(products_list, 3)
+	page = request.GET.get('page')
+	try:
+		product_list = p.page(page)
+	except PageNotAnInteger:
+		product_list = p.page(1)
+	except EmptyPage:
+		product_list = p.page(p.num_pages)
 	if request.user.cart_set.all():
 		cart=request.user.cart_set.all()[0]
 	else:
@@ -298,6 +319,11 @@ def pay_single(request,user_id,product_id):
 		user.account -=product.price
 		user.save()
 		productitem_list= []
+		myorder = Myorder(order_time=timezone.now(),buyer = user.username,seller = product.store.seller.username,
+								quantity=1,order_price=product.price,product=product)
+		myorder.save()
+		myorder.user.add(user)
+		myorder.save()
 		return render(request,'payment_result1.html',{'total':total,'cart':cart,'productitem_list':productitem_list,'product':product,'title':'支付结果'})
 	else:
 		return render(request,'payment_result2.html',{'cart':cart,'title':'支付结果'})
@@ -310,12 +336,36 @@ def order_page(request,user_id):
 @login_required
 def confirm_receipt(request,user_id,order_id):
 	user = get_object_or_404(User, pk=user_id)
-	cart = user.cart_set.all()[0]
 	order = get_object_or_404(Myorder, pk=order_id)
 	if order.is_receiver == False:
+		order.received_time= timezone.now()
 		order.is_receiver = True
 		order.save()
+		user_list= User.objects.filter(username=order.seller)
+		for u in user_list:
+			u.account +=order.order_price
+			u.save()
+		#print order.order_price
+		#print a[0].account
+		#s = a[0].account +order.order_price
+		#a[0].account = s
+		#a[0].save()
+		#print order.order_price
+		#print a[0].account
 	return redirect(reverse('depotapp:order_page',args=(user.id,)))
+@login_required
+def confirm_deliver(request,user_id,order_id):
+	user = get_object_or_404(User, pk=user_id)
+	order = get_object_or_404(Myorder, pk=order_id)
+	print order.is_deliver
+	if order.is_deliver == False:
+		order.deliver_time= timezone.now()
+		order.is_deliver = True
+		order.save()
+		#a = User.objects.filter(username=order.seller)
+		#request.user.account = request.user.account +order.order_price
+		#request.user.save()
+	return redirect(reverse('depotapp:order_unsolve',args=(user.id,)))
 @login_required
 def delete_order(request,order_id):
 	order = get_object_or_404(Myorder, pk=order_id)
@@ -326,7 +376,9 @@ def delete_order(request,order_id):
 	order.save()
 	if order.buyer_del and order.seller_del:
 		order.delete()
-	return redirect(reverse('depotapp:order_page',args=(request.user.id,)))
+	if request.user.is_buyer:
+		return redirect(reverse('depotapp:order_page',args=(request.user.id,)))
+	return redirect(reverse('depotapp:order_solved',args=(request.user.id,)))
 @login_required
 def delete_all_order(request):
 	user = request.user
@@ -344,12 +396,14 @@ def delete_all_order(request):
 			order.save()
 			if order.buyer_del and order.seller_del:
 				order.delete()
-	return redirect(reverse('depotapp:order_page',args=(request.user.id,)))
+	if request.user.is_buyer:
+		return redirect(reverse('depotapp:order_page',args=(request.user.id,)))
+	return redirect(reverse('depotapp:order_solved',args=(request.user.id,)))
 @login_required
 def order_unsolve(request,user_id):
-	order_list = Myorder.objects.filter(seller=request.user.username,is_deliver=False)
+	order_list = Myorder.objects.filter(seller=request.user.username,is_deliver=False).order_by('-id')
 	return render(request, 'order_unsolve.html', {'order_list':order_list})
 @login_required
 def order_solved(request, user_id):
-	order_list = Myorder.objects.filter(seller=request.user.username, is_deliver=True)
+	order_list = Myorder.objects.filter(seller=request.user.username, is_deliver=True).order_by('-id')
 	return render(request, 'order_solved.html', {'order_list': order_list})

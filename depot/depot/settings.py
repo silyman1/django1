@@ -1,3 +1,4 @@
+#--coding=utf-8
 """
 Django settings for depot project.
 
@@ -9,7 +10,7 @@ https://docs.djangoproject.com/en/1.8/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.8/ref/settings/
 """
-
+#--coding=utf-8
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
@@ -37,7 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'depotapp'
+    'depotapp',
+	'haystack',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -50,6 +52,15 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
 )
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        # 使用whoosh引擎
+        'ENGINE': 'haystack.backends.whoosh_cn_backend.WhooshEngine',
+        # 索引文件路径
+        'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+    }
+}
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 ROOT_URLCONF = 'depot.urls'
 

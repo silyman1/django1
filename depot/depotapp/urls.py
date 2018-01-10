@@ -19,8 +19,12 @@ urlpatterns = [url(r'^$',views.index,name='index'),
 				url(r'^buyer/(?P<user_id>[0-9]+)/pay_single/product/(?P<product_id>[0-9]+)/$',views.pay_single,name='pay_single'),
 				url(r'^buyer/(?P<user_id>[0-9]+)/order_page/$',views.order_page,name='order_page'),
 				url(r'^buyer/(?P<user_id>[0-9]+)/confirm_receipt/(?P<order_id>[0-9]+)/$',views.confirm_receipt,name='confirm_receipt'),
+				url(r'^seller/(?P<user_id>[0-9]+)/confirm_deliver/(?P<order_id>[0-9]+)/$',views.confirm_deliver,name='confirm_deliver'),
 				url(r'^buyer/delete/(?P<order_id>[0-9]+)/$',views.delete_order,name='delete_order'),
 				url(r'^buyer/delete_all_order/$',views.delete_all_order,name='delete_all_order'),
 				url(r'^seller/(?P<user_id>[0-9]+)/order_unsolve/$',views.order_unsolve,name='order_unsolve'),
 				url(r'^seller/(?P<user_id>[0-9]+)/order_solved/$',views.order_solved,name='order_solved'),
+				url(r'^search_product/$',views.search_product,name='search_product'),
+				url(r'^store_product/(?P<store_id>[0-9]+)/$',views.store_product,name='store_product'),
+
 ]
