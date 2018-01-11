@@ -1,0 +1,137 @@
+Django 图片上传、存储与显示
+参考博客：http://www.cognize.me/2016/05/09/djangopic
+
+ 
+
+开始之前要先安装python图像处理库：
+pip install --use-wheel Pillow
+
+
+一、数据库设置
+
+1. 先创建一个app，比如叫img_db。
+
+命令行：python manage.py startapp img_db
+
+2. 将其加入到settings.py文件中的INSTALLED_APPS中
+
+复制代码
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'img_db',
+    'corsheaders',
+]
+复制代码
+ 
+
+3. 在models.py中创建表，图片存储使用的是 models.ImageField
+
+例如：
+
+class IMG(models.Model):
+    img = models.ImageField(upload_to='img')
+    name = models.CharField(max_length=20)
+
+这里的upload_to是指定图片存储的文件夹名称，上传文件之后会自动创建
+
+ 
+
+4. 更新数据库
+
+python manage.py makemigrations
+python manage.py migrate
+
+ 
+
+二、修改配置文件setting.py
+只需要在最后的静态文件区加上下面两行代码：
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')     #设置静态文件路径为主目录下的media文件夹
+MEDIA_URL = '/media/'                                                 #url映射
+三、创建模板
+
+1. 在APP目录下创建文件夹templates  
+
+注意：这是django默认的形式，如果想把模板放在其他路径，得自己重新配置。
+
+
+2. 在templates文件夹下创建文件夹，比如叫img_tem
+
+ 
+
+3. 在img_tem下创建模板
+
+
+uploadimg.html
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+<input type="file" name="img">
+<button type="submit">上传</button>
+</form>
+
+showimg.html
+
+{% for img in imgs %}
+<img src="{{ img.img.url }}" />
+{% endfor %}
+
+这里img是Django的Model里的一个实例对象，使用img.img.url可以获取他的url，而且在settings.py中已经对其做了静态映射
+
+四、创建视图函数 view.py
+ 
+
+复制代码
+@csrf_exempt
+def uploadImg(request):
+    if request.method == 'POST':
+        new_img = IMG(
+            img=request.FILES.get('img'),
+            name = request.FILES.get('img').name
+        )
+        new_img.save()
+    return render(request, 'img_tem/uploadimg.html')
+复制代码
+
+首先用get方式访问uploadImg()，然后会跳转到uploadimg.html页面，上传文件时会使用post再次访问uploadImg()，这时就会将图片存储在数据库与media/img_tem中。
+
+复制代码
+@csrf_exempt
+def showImg(request):
+    imgs = IMG.objects.all()
+    content = {
+        'imgs':imgs,
+    }
+    for i in imgs:
+        print i.img.url
+    return render(request, 'img_tem/showimg.html', content
+复制代码
+ 
+五、url.py配置
+
+
+
+复制代码
+from django.conf.urls import url
+from django.contrib import admin
+import view
+from django.conf.urls.static import static
+from django.conf import settings
+
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    url(r'^upload', view.uploadImg),
+    url(r'^show', view.showImg),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+复制代码
+
+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  这句话是用来指定和映射静态文件的路径
+
+ 
+
+完成之后就可以发布了。

@@ -5,6 +5,7 @@ import datetime
 # Create your models here.
 
 class Question(models.Model):
+	#img = models.ImageField(upload_to='question')
 	question_text = models.CharField(max_length=200)
 	pub_date = models.DateTimeField('date published')#此参数可选。
 	def was_published_recently(self):
@@ -21,4 +22,6 @@ class Choice(models.Model):
 	votes = models.IntegerField(default=0)
 	def __str__(self):
 		return self.choice_text #返回utf8
-	
+class IMG(models.Model):
+	img = models.ImageField(upload_to='img')
+	name = models.CharField(max_length=20)

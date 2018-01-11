@@ -1,15 +1,16 @@
 from django.shortcuts import render,get_object_or_404
 from django.http import HttpResponse,Http404,HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from .models import Question,Choice
+from .models import Question,Choice,IMG
 from django.views import generic
+from django.views.decorators.csrf import csrf_exempt
 #from django.template import RequestContext,loader
 # Create your views here.
 class IndexView(generic.ListView):
 	template_name = 'polls/index.html'
 	context_object_name = 'latest_question_list'
 	def get_queryset(self):
-		return  Question.objects.order_by('-pub_date')[:5]
+		return	Question.objects.order_by('-pub_date')[:5]
 class DetailView(generic.DetailView):
 	#question = get_object_or_404(Question,pk = question_id)
 	#try:
@@ -38,3 +39,25 @@ def vote(request, question_id):
 		a = reverse('polls:results',args=(p.id,))
 		print a,'#################'
 		return HttpResponseRedirect(a)
+@csrf_exempt
+def uploadImg(request):
+	if request.method == 'POST':
+		new_img = IMG(
+			img=request.FILES.get('img'),
+			name = request.FILES.get('img').name
+		)
+		new_img.save()
+	return render(request, 'polls/uploadimg.html')
+@csrf_exempt
+def showImg(request):
+	imgs = IMG.objects.all()
+	urls =[]
+	for img in imgs:
+		url =img.img.url.encode('utf-8')
+		urls.append(url)
+	content = {
+		'urls':urls,
+	}
+	for i in imgs:
+		print i.img.url.encode('utf-8')
+	return render(request, 'polls/showimg.html',content)
