@@ -8,7 +8,7 @@ import re
 import shutil
 import threading
 import warnings
-
+from jieba.analyse import ChineseAnalyzer
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils import six
@@ -23,7 +23,6 @@ from haystack.models import SearchResult
 from haystack.utils import log as logging
 from haystack.utils import get_identifier, get_model_ct
 from haystack.utils.app_loading import haystack_get_model
-from haystack.backends.ChineseAnalyzer import ChineseAnalyzer
 try:
     import whoosh
 except ImportError:
@@ -44,7 +43,7 @@ from whoosh.highlight import ContextFragmenter, HtmlFormatter
 from whoosh.qparser import QueryParser
 from whoosh.searching import ResultsPage
 from whoosh.writing import AsyncWriter
-
+from jieba.analyse import ChineseAnalyzer
 
 DATETIME_REGEX = re.compile('^(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})T(?P<hour>\d{2}):(?P<minute>\d{2}):(?P<second>\d{2})(\.\d{3,6}Z?)?$')
 LOCALS = threading.local()

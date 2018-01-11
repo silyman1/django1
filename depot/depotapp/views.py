@@ -407,3 +407,6 @@ def order_unsolve(request,user_id):
 def order_solved(request, user_id):
 	order_list = Myorder.objects.filter(seller=request.user.username, is_deliver=True).order_by('-id')
 	return render(request, 'order_solved.html', {'order_list': order_list})
+@login_required
+def unknown(request):
+	return render(request,'unknown.html')

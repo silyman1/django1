@@ -110,6 +110,8 @@ USE_TZ = True
 AUTH_USER_MODEL = 'depotapp.User'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-
+STATICFILES_DIRS = (  
+    os.path.join(BASE_DIR, "static"),  
+)  
 STATIC_URL = '/static/'
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'

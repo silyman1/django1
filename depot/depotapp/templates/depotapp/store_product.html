@@ -1,8 +1,13 @@
+<div><b>{{product.store.store_name}}</b></div>
+{%if product_list%}
+<p>商品列表：</p>
 {%for product in product_list%}
 <p>
 	<div><a href={%url 'depotapp:product_detail' product.id%}><strong>{{product.title}}</strong></a></div>
 	<div><i>{{product.price}}</i></div>
-	<div><i>{{product.store.store_name}}</i></div>
 	<hr>
 </p>
 {%endfor%}
+{%else%}
+<p>该店铺暂无商品哦！！！</p>
+{%endif%}

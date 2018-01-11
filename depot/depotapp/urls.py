@@ -26,5 +26,5 @@ urlpatterns = [url(r'^$',views.index,name='index'),
 				url(r'^seller/(?P<user_id>[0-9]+)/order_solved/$',views.order_solved,name='order_solved'),
 				url(r'^search_product/$',views.search_product,name='search_product'),
 				url(r'^store_product/(?P<store_id>[0-9]+)/$',views.store_product,name='store_product'),
-
+				url(r'^unknown/$',views.unknown,name='unknown'),
 ]
