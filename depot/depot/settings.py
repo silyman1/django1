@@ -67,7 +67,7 @@ ROOT_URLCONF = 'depot.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'depotapp\\templates\\depotapp')],
+        'DIRS': [os.path.join(BASE_DIR, 'depotapp\\templates\\depotapp'),os.path.join(BASE_DIR, 'depotapp\\templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -111,7 +111,7 @@ AUTH_USER_MODEL = 'depotapp.User'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 STATICFILES_DIRS = (  
-    os.path.join(BASE_DIR, "static"),  
+    os.path.join(TEMPLATES[0]['DIRS'][1], "static"),  
 )  
 STATIC_URL = '/static/'
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
