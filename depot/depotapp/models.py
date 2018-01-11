@@ -31,6 +31,8 @@ class Product(models.Model):
 	price = models.DecimalField(max_digits=8,decimal_places=2)
 	time_to_market =models.DateTimeField('date to market')
 	store = models.ForeignKey(Store)
+	def img(self):
+		return self.image_url.encode('utf-8')
 	def __unicode__(self):
 		return self.title#返回unicode
 class Cart(models.Model):

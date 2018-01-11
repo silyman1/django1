@@ -1,6 +1,6 @@
 {%block content%}
-<h3 >欢迎登录lalala！！！</h3>
-<p><a href={%url 'depotapp:regist'%}>zhuce</a></p>
+<h3 >欢迎登录lalala网！！！</h3>
+<p><a href={%url 'depotapp:regist'%}>没有账号？注册</a></p>
 <form action=""method="post"name="login">
 {% csrf_token %}
 <p>{{loginform.username}}</p>

@@ -5,6 +5,7 @@
 {%if not order.seller_del%}
 <p>
 	<div><span>订单号：{{order.id}}</span>&nbsp;&nbsp;&nbsp;
+	<div><i><img src='/static/images/{{order.product.img}}' alt="Hi!" /></i></div>
 	<div><a href={%url 'depotapp:product_detail' order.product.id%}><strong>商品：{{order.product.title}}</strong></a></div>
 	<div><i>单价：{{order.product.price}}</i></div>
 	<div><i>数量：{{order.quantity}}</i></div>

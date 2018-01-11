@@ -9,6 +9,7 @@
 	{%if order.is_receiver%}
 		<span><a href={%url 'depotapp:delete_order' order.id%}>删除订单</span></div>
 	{%endif%}
+	<div><i><img src='/static/images/{{order.product.img}}' alt="Hi!" /></i></div>
 	<div><a href={%url 'depotapp:product_detail' order.product.id%}><strong>商品：{{order.product.title}}</strong></a></div>
 	<div><i>单价：{{order.product.price}}</i></div>
 	<div><i>数量：{{order.quantity}}</i></div>

@@ -6,6 +6,7 @@
 {%if result_list%}
 {%for product in result_list%}
 <p>
+		<div><i><img src='/static/images/{{product.img}}' alt="Hi!" /></i></div>
 	<div><a href={%url 'depotapp:product_detail' product.id%}><strong>{{product.title}}</strong></a></div>
 	<div><i>{{product.price}}</i></div>
 	<div><i>{{product.store.store_name}}</i></div>

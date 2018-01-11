@@ -2,7 +2,7 @@
 {%block content%}
 <h1>{{store.store_name}}</h1>
 <h2>新添商品:</h2>
-<form action="" method="post" name ="edit">
+<form action="" method="post" enctype="multipart/form-data" name ="edit">
 	{%csrf_token%}
 	<table>
 		<tr>
@@ -16,6 +16,10 @@
 		<tr>
 			<td>商品价格:</td>
 			<td>{{product_form.price}}</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><input type="file" name = "picfile"></td>
 		</tr>
 		<tr>
 			<td></td>

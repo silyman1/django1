@@ -6,6 +6,7 @@
 {%if productitem_list%}
 {%for item in productitem_list%}
 <p>
+	<div><i><img src='/static/images/{{item.pro_item.img}}' alt="Hi!" /></i></div>
 	<div><a href={%url 'depotapp:product_detail' item.pro_item.id%}><strong>{{item.pro_item.title}}</strong></a></div>
 	<div><i>{{item.unit_price}}</i></div>
 	<div><i>{{item.pro_item.store.store_name}}</i></div>
@@ -23,4 +24,19 @@
 <hr/>
 <div><b><a href={%url 'depotapp:payment' user.id cart.id%}>立即支付</a></b></div>
 {%endif%}
+<div class="pagination">
+    <span class="step-links">
+        {% if productitem_list.has_previous %}
+            <a href="?page={{ productitem_list.previous_page_number }}">上一页</a>
+        {% endif %}
+ 
+        <span class="current">
+            第 {{ productitem_list.number }} 页/共 {{ productitem_list.paginator.num_pages }} 页
+        </span>
+ 
+        {% if productitem_list.has_next %}
+            <a href="?page={{ productitem_list.next_page_number }}">下一页</a>
+        {% endif %}
+    </span>
+</div>
 {%endblock%}

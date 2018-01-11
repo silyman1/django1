@@ -1,7 +1,9 @@
+{%extends "base2.html"%}
+{% load staticfiles %}
 {%block content%}
 <h1>店长：{{store.seller.username}}</h1>
 <h2>店铺详情：</h2>
-<hr/>
+
 <p>
 	<div><strong>店铺名：{{store.store_name}}</strong>&nbsp;&nbsp;&nbsp;<span>
 		<a href={%url 'depotapp:store_detail_edit' store.id%}>编辑信息</a></span>
@@ -18,6 +20,7 @@
 {%if product_list%}
 {%for product in product_list%}
 <p>
+	<div><i><img src='/static/images/{{product.img}}' alt="Hi!" /></i></div>
 	<div><a href={%url 'depotapp:product_detail' product.id%}><strong>商品：{{product.title}}</strong></a></div>
 	<div><i>价格：{{product.price}}</i></div>
 	<div><i>上市时间：{{product.time_to_market}}</i></div>

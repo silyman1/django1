@@ -13,6 +13,7 @@ from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from django.template import loader, RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from PIL import Image
 # Create your views here.
 
 #数据操作的user.id都没做判断
@@ -179,7 +180,15 @@ def add_product(request,store_id):
 			product.price = product_form.cleaned_data['price']
 			product.time_to_market = timezone.now()
 			product.store = store
-			product.image_url = 'unsetting'
+			try:
+				reqfile = request.FILES['picfile']
+				img = Image.open(reqfile)
+				img.thumbnail((500,500),Image.ANTIALIAS)
+				name = product.title
+				img.save("E:\\gitprojects\\django1\\depot\\depotapp\\templates\\static\\images\\%s.gif"%name,"gif")
+				product.image_url = name+'.gif'
+			except Exception,e:
+				return HttpResponse("Error %s"%e)#异常，查看报错信息
 			product.save()
 			print u'添加商品成功'
 			return redirect(reverse('depotapp:store_detail',args=(store.id,)))
@@ -215,7 +224,7 @@ def shouye(request):
 	else:
 		cart =Cart(total_price=0,user=request.user)
 		cart.save()
-	return render(request,'depotapp/shouye.html',{'cart':cart,'product_list':product_list})
+	return render(request,'depotapp/shouye.html',{'cart':cart,'product_list':product_list,'title':'首页'})
 @login_required
 def add_to_shopping_cart(request,user_id,product_id):
 	user = get_object_or_404(User, pk=user_id)
@@ -265,7 +274,15 @@ def clear_cart(request,user_id,cart_id):
 def shopping_cart(request,user_id,cart_id):
 	user = get_object_or_404(User, pk=user_id)
 	cart = get_object_or_404(Cart, pk=cart_id)
-	productitem_list = cart.lineitem_set.all()
+	productitems_list = cart.lineitem_set.all()
+	p = Paginator(productitems_list, 4)
+	page = request.GET.get('page')
+	try:
+		productitem_list = p.page(page)
+	except PageNotAnInteger:
+		productitem_list = p.page(1)
+	except EmptyPage:
+		productitem_list = p.page(p.num_pages)
 	return render(request,'shopping_cart.html',{'cart':cart,'productitem_list':productitem_list,'title':'购物车'})
 @login_required
 def payment(request,user_id,cart_id):
@@ -298,7 +315,7 @@ def recharge(request,user_id):
 	cart = user.cart_set.all()[0]
 	if request.method=='POST':
 		recharge_form =Recharge_Form(request.POST)
-		if recharge_form.is_valid():
+		if recharge_form.is_valid() and recharge_form.cleaned_data['amount'] >=0:
 			user.account += recharge_form.cleaned_data['amount']
 			user.save()
 			print u'充值成功'
@@ -331,7 +348,15 @@ def pay_single(request,user_id,product_id):
 def order_page(request,user_id):
 	user = get_object_or_404(User, pk=user_id)
 	cart = user.cart_set.all()[0]
-	order_list = Myorder.objects.filter(buyer=user.username).order_by('-order_time')
+	orders_list = Myorder.objects.filter(buyer=user.username).order_by('-order_time')
+	p = Paginator(orders_list, 4)
+	page = request.GET.get('page')
+	try:
+		order_list = p.page(page)
+	except PageNotAnInteger:
+		order_list = p.page(1)
+	except EmptyPage:
+		order_list = p.page(p.num_pages)
 	return render(request,'myorder.html',{'cart':cart,'title':'我的订单','order_list':order_list})
 @login_required
 def confirm_receipt(request,user_id,order_id):
